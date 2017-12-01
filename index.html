@@ -4,11 +4,11 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 <head>
     <link rel="shortcut icon" type="image/x-icon" href="bitcoin-icon.png" />
+        <title>{{averageOfAll}}$</title>
 </head>
 <body>
 
 
-        <title>{{averageOfAll}}$</title>
 
     <h1>bitStamp Price: {{bitSteampPrice}}$</h1>
     <h1>bitFinex &nbsp Price: {{bitFinexPrice}}$</h1>
@@ -25,7 +25,7 @@
     var bitFinexPrice;
     var bitRexPrice;
 
-        app.controller('myCtrl', function($scope, $http) {
+        app.controller('myCtrl', function($scope, $http,$rootScope) {
             function fn60sec() {
             $http.get("https://www.bitstamp.net/api/v2/transactions/btcusd/")
                 .then(function(response) {
