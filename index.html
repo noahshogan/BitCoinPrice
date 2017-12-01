@@ -1,71 +1,36 @@
-
-
-<html>
-<div ng-app="myApp" ng-controller="myCtrl">
+<html ng-app="myApp" ng-controller="myCtrl">
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 <head>
-    <title>{{averageOfAll}}$</title>
     <link rel="shortcut icon" type="image/x-icon" href="bitcoin-icon.png" />
+    <title>{{averageOfAll}}$</title>
 </head>
 <body>
-
-
-
-
     <h1>bitStamp Price: {{bitSteampPrice}}$</h1>
     <h1>bitFinex &nbsp Price: {{bitFinexPrice}}$</h1>
-
-
-
-
 <script>
     var app = angular.module('myApp', []);
-    var arr;
-    var arr2;
-    var arr3;
     var bitSteampPrice;
-    var bitFinexPrice;
-    var bitRexPrice;
-        app.controller('myCtrl', function($scope, $http) {
-            function fn60sec() {
-            $http.get("https://www.bitstamp.net/api/v2/transactions/btcusd/")
-                .then(function(response) {
-
-                    arr = response.data;
-                    var total=0;
-
-                    for(var i=0;i<10;i++){
-                        total+=parseInt(arr[i].price);
-                    }
-                    bitSteampPrice=Math.round(total/10);
-                    $scope.bitSteampPrice=bitSteampPrice;
-                }).then(
-                $http.get("https://api.bitfinex.com/v2/trades/tBTCUSD/hist")
-                    .then(function(response) {
-
-                        arr2 = response.data;
-                        var total=0;
-
-                        for(var i=0;i<10;i++){
-                            total+=parseInt(arr2[i][3]);
-                        }
-                        bitFinexPrice=Math.round(total/10);
-                        $scope.bitFinexPrice=bitFinexPrice;
-                    })
-            ).then(
-                $scope.averageOfAll=(bitFinexPrice+bitSteampPrice)/2
-            )
-        }
-
-
-            fn60sec();
-            setInterval(fn60sec, 10000);
-        });
-
-
-
+    var bitFinexPrice;app.controller('myCtrl', function($scope, $http,$rootScope) {
+        function fn60sec() {
+        $http.get("https://www.bitstamp.net/api/v2/transactions/btcusd/")
+            .then(function(response) {
+                var total=response.data.reduce(function (acc, obj){ return acc + parseInt(obj.price);}, 0);
+                bitSteampPrice=Math.round(total/response.data.length);
+                $scope.bitSteampPrice=bitSteampPrice;
+            }).then(
+        $http.get("https://api.bitfinex.com/v2/trades/tBTCUSD/hist")
+            .then(function(response) {
+                var total=response.data.reduce(function (acc, obj){ return acc + parseInt(obj[3]);}, 0);
+                bitFinexPrice=Math.round(total/response.data.length);
+                $scope.bitFinexPrice=bitFinexPrice;
+             })
+        ).then(
+            $rootScope.averageOfAll=(bitFinexPrice+bitSteampPrice)/2
+        )
+    }
+        fn60sec();
+        setInterval(fn60sec, 10000);
+    });
 </script>
-
 </body>
-</div>
 </html>
