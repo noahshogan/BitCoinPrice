@@ -8,11 +8,13 @@
     <h1>BitStamp Price: {{bitSteampPrice}}$</h1>
     <h1>BitFinex &nbsp Price: {{bitFinexPrice}}$</h1>
     <h1>CoinBase Price: {{coinBasePrice}}$</h1>
+    <h1>CoinDesk Price: {{coinDeskPrice}}$</h1>
 <script>
     var app = angular.module('myApp', []);
     var bitSteampPrice;
     var bitFinexPrice;
     var coinBasePrice;
+    var coinDeskPrice;
     app.controller('myCtrl', function($scope, $http,$rootScope) {
         function fn60sec() {
         $http.get("https://www.bitstamp.net/api/v2/transactions/btcusd/")
@@ -34,7 +36,13 @@
                     $scope.coinBasePrice=coinBasePrice;
                 })
         ).then(
-            $rootScope.averageOfAll=Math.round((bitFinexPrice+bitSteampPrice+coinBasePrice)/3)
+                $http.get("https://api.coindesk.com/v1/bpi/currentprice.json")
+                    .then(function(response) {
+                        coinDeskPrice=Math.round(response.data.bpi.USD.rate_float);
+                        $scope.coinDeskPrice=coinDeskPrice;
+                    })
+            ).then(
+                    $rootScope.averageOfAll=Math.round((bitFinexPrice+bitSteampPrice+coinBasePrice+coinDeskPrice)/4)
         )
     }
         fn60sec();
