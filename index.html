@@ -7,16 +7,15 @@
 <body>
     <h1>BitStamp Price: {{bitSteampPrice}}$</h1>
     <h1>BitFinex &nbsp Price: {{bitFinexPrice}}$</h1>
-    <h1>CoinBase Price: {{coinBasePrice}}$</h1>
     <h1>CoinDesk Price: {{coinDeskPrice}}$</h1>
-    <br><br><br><br><br>
+    <br><br><br>
     <h1>minPrice : {{minPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{maxPrice}}$</h1>
 
 <script>
     var app = angular.module('myApp', []);
     var bitSteampPrice;
     var bitFinexPrice;
-    var coinBasePrice;
+
     var average;
     var coinDeskPrice;
     var maxPrice=0;
@@ -37,19 +36,13 @@
                     $scope.bitFinexPrice=bitFinexPrice;
                 })
         ).then(
-            $http.get("https://api.coinbase.com/v2/prices/BTC-USD/spot")
-                .then(function(response) {
-                    coinBasePrice=Math.round(response.data.data.amount);
-                    $scope.coinBasePrice=coinBasePrice;
-                })
-        ).then(
                 $http.get("https://api.coindesk.com/v1/bpi/currentprice.json")
                     .then(function(response) {
                         coinDeskPrice=Math.round(response.data.bpi.USD.rate_float);
                         $scope.coinDeskPrice=coinDeskPrice;
                     })
             ).then(
-            average= Math.round((bitFinexPrice+bitSteampPrice+coinBasePrice+coinDeskPrice)/4)
+            average= Math.round((bitFinexPrice+bitSteampPrice+coinDeskPrice)/3)
 
         )
             $rootScope.averageOfAll=average;
