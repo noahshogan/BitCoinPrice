@@ -1,56 +1,36 @@
-
-
 <html ng-app="myApp" ng-controller="myCtrl">
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 <head>
-    <link rel="stylesheet"
-          href="bower_components/chartist/dist/chartist.min.css">
     <link rel="shortcut icon" type="image/x-icon" href="bitcoin-icon.png" />
-        <title>{{averageOfAll}}$</title>
+    <title>{{averageOfAll}}$</title>
 </head>
 <body>
-
-
-
     <h1>bitStamp Price: {{bitSteampPrice}}$</h1>
     <h1>bitFinex &nbsp Price: {{bitFinexPrice}}$</h1>
-
-
-
-
 <script>
     var app = angular.module('myApp', []);
     var bitSteampPrice;
-    var bitFinexPrice;
-
-        app.controller('myCtrl', function($scope, $http,$rootScope) {
-            function fn60sec() {
-            $http.get("https://www.bitstamp.net/api/v2/transactions/btcusd/")
+    var bitFinexPrice;app.controller('myCtrl', function($scope, $http,$rootScope) {
+        function fn60sec() {
+        $http.get("https://www.bitstamp.net/api/v2/transactions/btcusd/")
+            .then(function(response) {
+                var total=response.data.reduce(function (acc, obj){ return acc + parseInt(obj.price);}, 0);
+                bitSteampPrice=Math.round(total/response.data.length);
+                $scope.bitSteampPrice=bitSteampPrice;
+            }).then(
+            $http.get("https://api.bitfinex.com/v2/trades/tBTCUSD/hist")
                 .then(function(response) {
-                    var total=response.data.map(function(a){return parseInt(a.price);}).reduce(function(a,b) {return a + b;});
-                    bitSteampPrice=Math.round(total/response.data.length);
-                    $scope.bitSteampPrice=bitSteampPrice;
-                }).then(
-                $http.get("https://api.bitfinex.com/v2/trades/tBTCUSD/hist")
-                    .then(function(response) {
-                        var total=response.data.reduce(function (acc, obj){ return acc + parseInt(obj[3]);}, 0);
-                        bitFinexPrice=Math.round(total/response.data.length);
-                        $scope.bitFinexPrice=bitFinexPrice;
-                    })
-            ).then(
-                $rootScope.averageOfAll=(bitFinexPrice+bitSteampPrice)/2
-            )
-        }
-
-
-            fn60sec();
-            setInterval(fn60sec, 10000);
-        });
-
-
-
-
-
+                    var total=response.data.reduce(function (acc, obj){ return acc + parseInt(obj[3]);}, 0);
+                    bitFinexPrice=Math.round(total/response.data.length);
+                    $scope.bitFinexPrice=bitFinexPrice;
+                })
+        ).then(
+            $rootScope.averageOfAll=(bitFinexPrice+bitSteampPrice)/2
+        )
+    }
+        fn60sec();
+        setInterval(fn60sec, 10000);
+    });
 </script>
     <script src="bower_components/chartist/dist/chartist.min.js"></script>
 </body>
