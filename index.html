@@ -9,12 +9,19 @@
     <h1>BitFinex &nbsp Price: {{bitFinexPrice}}$</h1>
     <h1>CoinBase Price: {{coinBasePrice}}$</h1>
     <h1>CoinDesk Price: {{coinDeskPrice}}$</h1>
+    <br><br><br><br><br>
+    <h1>minPrice : {{minPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{maxPrice}}$</h1>
+
 <script>
     var app = angular.module('myApp', []);
     var bitSteampPrice;
     var bitFinexPrice;
     var coinBasePrice;
+    var average;
     var coinDeskPrice;
+    var maxPrice=0;
+    var minPrice=9999999999;
+    var queue = [];
     app.controller('myCtrl', function($scope, $http,$rootScope) {
         function fn60sec() {
         $http.get("https://www.bitstamp.net/api/v2/transactions/btcusd/")
@@ -42,12 +49,29 @@
                         $scope.coinDeskPrice=coinDeskPrice;
                     })
             ).then(
-                    $rootScope.averageOfAll=Math.round((bitFinexPrice+bitSteampPrice+coinBasePrice+coinDeskPrice)/4)
+            average= Math.round((bitFinexPrice+bitSteampPrice+coinBasePrice+coinDeskPrice)/4)
+
         )
+            $rootScope.averageOfAll=average;
+        addToMaxMix(average)
     }
         fn60sec();
         setInterval(fn60sec, 10000);
+        function addToMaxMix(number){
+            queue.push(number);
+            if(queue.length>360){
+                queue.shift();
+            }
+            for(var i = 0 ; i < queue.length ; i++){
+                if(queue[i]<minPrice) minPrice=queue[i];
+                if(queue[i]>maxPrice) maxPrice=queue[i];
+            }
+            $scope.minPrice=minPrice;
+            $scope.maxPrice=maxPrice;
+        }
     });
+
+
 </script>
 </body>
 </html>
