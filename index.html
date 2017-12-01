@@ -52,7 +52,7 @@
                         $scope.bitFinexPrice=bitFinexPrice;
                     })
             ).then(
-                $scope.averageOfAll=(bitFinexPrice+bitSteampPrice)/2
+                $rootScope.averageOfAll=(bitFinexPrice+bitSteampPrice)/2
             )
         }
 
