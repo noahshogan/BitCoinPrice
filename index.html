@@ -18,12 +18,12 @@
                 bitSteampPrice=Math.round(total/response.data.length);
                 $scope.bitSteampPrice=bitSteampPrice;
             }).then(
-            $http.get("https://api.bitfinex.com/v2/trades/tBTCUSD/hist")
-                .then(function(response) {
-                    var total=response.data.reduce(function (acc, obj){ return acc + parseInt(obj[3]);}, 0);
-                    bitFinexPrice=Math.round(total/response.data.length);
-                    $scope.bitFinexPrice=bitFinexPrice;
-                })
+        $http.get("https://api.bitfinex.com/v2/trades/tBTCUSD/hist")
+            .then(function(response) {
+                var total=response.data.reduce(function (acc, obj){ return acc + parseInt(obj[3]);}, 0);
+                bitFinexPrice=Math.round(total/response.data.length);
+                $scope.bitFinexPrice=bitFinexPrice;
+             })
         ).then(
             $rootScope.averageOfAll=(bitFinexPrice+bitSteampPrice)/2
         )
@@ -32,6 +32,5 @@
         setInterval(fn60sec, 10000);
     });
 </script>
-    <script src="bower_components/chartist/dist/chartist.min.js"></script>
 </body>
 </html>
