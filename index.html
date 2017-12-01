@@ -1,16 +1,17 @@
 
 
 <html>
-<div ng-app="myApp" ng-controller="myCtrl">
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 <head>
-    <title>{{averageOfAll}}$</title>
-    <link rel="shortcut icon" type="image/x-icon" href="bitcoin-icon.png" />
+    <link rel="shortcut icon" type="image/x-icon" href="bitIcon.ico" />
 </head>
 <body>
+<div ng-app="myApp" ng-controller="myCtrl">
 
 
-
+    <head>
+        <title>{{averageOfAll}}$</title>
+    </head>
 
     <h1>bitStamp Price: {{bitSteampPrice}}$</h1>
     <h1>bitFinex &nbsp Price: {{bitFinexPrice}}$</h1>
@@ -26,6 +27,7 @@
     var bitSteampPrice;
     var bitFinexPrice;
     var bitRexPrice;
+
         app.controller('myCtrl', function($scope, $http) {
             function fn60sec() {
             $http.get("https://www.bitstamp.net/api/v2/transactions/btcusd/")
@@ -66,6 +68,6 @@
 
 </script>
 
-</body>
 </div>
+</body>
 </html>
