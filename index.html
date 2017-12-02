@@ -82,6 +82,8 @@
             if(queue.length>360){
                 queue.shift();
             }
+            minPrice=999999;
+            maxPrice=0;
             for(var i = 0 ; i < queue.length ; i++){
                 if(queue[i]<minPrice) minPrice=queue[i];
                 if(queue[i]>maxPrice) maxPrice=queue[i];
