@@ -12,6 +12,8 @@
     <h1>minPrice : {{minPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{maxPrice}}$</h1>
     <br>
     <br>
+    <canvas id="myCanvas" width="800" height="300" style="border:1px solid #d3d3d3;"></canvas>
+    <br>
     <br>
     <h1>Ethereum</h1>
     <h1>BitStamp Price: {{bitEthSteampPrice}}$</h1>
@@ -21,7 +23,8 @@
     var app = angular.module('myApp', []);
     var bitSteampPrice;
     var bitFinexPrice;
-
+    var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
     var average;
     var coinDeskPrice;
     var bitEthFinexPrice;
@@ -90,6 +93,20 @@
             }
             $scope.minPrice=minPrice;
             $scope.maxPrice=maxPrice;
+            draw();
+        }
+
+        function draw(){
+            ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+            for(var i = 0 ; i < queue.length ; i++){
+                var hight = (270/(maxPrice-minPrice))*(queue[i]-minPrice);
+                ctx.beginPath();
+                ctx.lineWidth = "1";
+                ctx.strokeStyle = "green";
+                ctx.rect(2.5*i, 300-hight, 2.5, hight);
+                ctx.stroke();
+                
+            }
         }
     });
 
