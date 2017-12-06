@@ -14,9 +14,12 @@
 <br>
 <form name="myForm" >
     <label>
-        Value1:<input type="checkbox" ng-change="change()" ng-model="checkboxModel.value1">
-        Value2:<input type="checkbox" ng-change="change()" ng-model="checkboxModel.value2">
-    </label><br/>
+        Show BitCoin Price Plot:<input type="checkbox" ng-change="change()" ng-model="checkboxModel.value1">
+    </label>
+    <label>
+        Show Ethereum Price Plot:<input type="checkbox" ng-change="change()" ng-model="checkboxModel.value2">
+    </label>
+    <br/>
 </form>
 <canvas id="myCanvas" width="800" height="300" style="border:1px solid #d3d3d3;"></canvas>
 {{averageOfAll}}$
