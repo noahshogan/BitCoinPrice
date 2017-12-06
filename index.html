@@ -6,10 +6,9 @@
 </head>
 <body>
 <h1>BitCoin</h1>
-<h1>BitStamp Price: {{bitSteampPrice}}$</h1>
-<h1>BitFinex &nbsp Price: {{bitFinexPrice}}$</h1>
-<h1>CoinDesk Price: {{coinDeskPrice}}$</h1>
-<h1>minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$</h1>
+<h1>BitStamp: {{bitSteampPrice}}$ &nbsp&nbsp&nbsp&nbsp BitFinex: {{bitFinexPrice}}$ &nbsp&nbsp&nbsp&nbsp CoinDesk: {{coinDeskPrice}}$</h1>
+    <h1>Average Price: {{averageOfAll}}$</h1>
+    minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
 
 <br>
 <form name="myForm" >
@@ -22,7 +21,6 @@
     <br/>
 </form>
 <canvas id="myCanvas" width="800" height="300" style="border:1px solid #d3d3d3;"></canvas>
-{{averageOfAll}}$
 
 <br>
 <br>
