@@ -7,8 +7,8 @@
 <body>
 <h1>BitCoin</h1>
 <h1>BitStamp: {{bitSteampPrice}}$ &nbsp&nbsp&nbsp&nbsp BitFinex: {{bitFinexPrice}}$ &nbsp&nbsp&nbsp&nbsp CoinDesk: {{coinDeskPrice}}$</h1>
-    <h1>Average Price: {{averageOfAll}}$</h1>
-    minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
+<h1>Average Price: {{averageOfAll}}$</h1>
+minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
 
 <br>
 <form name="myForm" >
@@ -20,7 +20,7 @@
     </label>
     <br/>
 </form>
-<canvas id="myCanvas" width="800" height="300" style="border:1px solid #d3d3d3;"></canvas>
+<canvas id="myCanvas" width="800" height="300" ></canvas>
 
 <br>
 <br>
@@ -34,6 +34,7 @@
     var bitSteampPrice;
     var bitFinexPrice;
     var c = document.getElementById("myCanvas");
+    c.style.border = "none";
     var ctx = c.getContext("2d");
     var bitCoinAverage;
     var coinDeskPrice;
@@ -133,6 +134,22 @@
         }
         function draw(){
             ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+
+            ctx.font = "14px Arial";
+            var interval = Math.round((bitCoinMaxPrice-bitCoinMinPrice)/3);
+            ctx.fillText(bitCoinMaxPrice,750,15);
+            ctx.fillText(bitCoinMaxPrice+interval,750,85);
+            ctx.fillText(bitCoinMaxPrice+interval*2,750,155);
+            ctx.fillText(bitCoinMaxPrice+interval*3,750,225);
+            ctx.fillText(bitCoinMinPrice,750,295);
+
+            ctx.strokeStyle = "#f2f2f2";
+            ctx.moveTo(0, 10);ctx.lineTo(745, 10);ctx.stroke();
+            ctx.moveTo(0, 80);ctx.lineTo(745, 80);ctx.stroke();
+            ctx.moveTo(0, 150);ctx.lineTo(745, 150);ctx.stroke();
+            ctx.moveTo(0, 220);ctx.lineTo(745, 220);ctx.stroke();
+            ctx.moveTo(0, 290);ctx.lineTo(745, 290);ctx.stroke();
+
             if($scope.checkboxModel.value1){
                 ctx.beginPath();
                 ctx.strokeStyle="green";
@@ -141,7 +158,7 @@
                 if(bitCoinQueue.length>1){
                     for(var i = 1 ; i < bitCoinQueue.length ; i++){
                         var bitHight = (270/(bitCoinMaxPrice-bitCoinMinPrice))*(bitCoinQueue[i]-bitCoinMinPrice);
-                        ctx.lineTo(2.2*(i), 300-bitHight);
+                        ctx.lineTo(2.1*(i), 300-bitHight);
                     }
                 }
                 ctx.stroke();
@@ -154,7 +171,7 @@
                 if (ethereumQueue.length > 1) {
                     for (var j = 1; j < ethereumQueue.length; j++) {
                         var ethHight = (270 / (ethereumMaxPrice - ethereumMinPrice)) * (ethereumQueue[j] - ethereumMinPrice);
-                        ctx.lineTo(2.2 * (j), 300 - ethHight);
+                        ctx.lineTo(2.1 * (j), 300 - ethHight);
                     }
                 }
                 ctx.stroke();
