@@ -184,8 +184,7 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
         $http.get("http://www.apilayer.net/api/live?access_key=36ad517fb030c9d1f97e72e5ee96d717")
             .then(function(response) {
                 USDILS=response.data.quotes.USDILS;
-         })
-
+            })
     });
 
 
