@@ -7,7 +7,7 @@
 <body>
 <h1>BitCoin</h1>
 <h1>BitStamp: {{bitSteampPrice}}$ &nbsp&nbsp&nbsp&nbsp BitFinex: {{bitFinexPrice}}$ &nbsp&nbsp&nbsp&nbsp CoinDesk: {{coinDeskPrice}}$</h1>
-<h1>Average Price: {{averageOfAll}}$</h1>
+<h1>Average Price: {{averageOfAll}}$  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp NIS: {{UsdIlsToBitCoin}} </h1>
 minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
 
 <br>
@@ -104,7 +104,7 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
             else if(!isNaN(coinDeskPrice))$rootScope.averageOfAll=coinDeskPrice;
             else{$rootScope.averageOfAll=(bitCoinMinPrice+bitCoinMaxPrice)/2 }
             ethereumAverage = Math.round((bitEthFinexPrice+bitEthSteampPrice)/2)
-
+            $scope.UsdIlsToBitCoin=numberWithCommas(Math.round(USDILS*bitCoinAverage));
             addToMinMax(bitCoinAverage,ethereumAverage)
         }
         fn60sec();
@@ -180,6 +180,12 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
         function numberWithCommas(x){
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
+        var USDILS;
+        $http.get("http://www.apilayer.net/api/live?access_key=36ad517fb030c9d1f97e72e5ee96d717")
+            .then(function(response) {
+                USDILS=response.data.quotes.USDILS;
+         })
+
     });
 
 
