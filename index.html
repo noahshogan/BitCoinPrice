@@ -41,11 +41,11 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
     var bitEthFinexPrice;
     var bitEthSteampPrice;
     var bitCoinMaxPrice=0;
-    var bitCoinMinPrice=9999999999;
+    var bitCoinMinPrice=0;
     var bitCoinQueue = [];
     var ethereumAverage;
     var ethereumMaxPrice=0;
-    var ethereumMinPrice=9999999999;
+    var ethereumMinPrice=0;
     var ethereumQueue = [];
 
 
@@ -134,7 +134,7 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
         }
         function draw(){
             ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
-
+            ctx.beginPath();
             ctx.font = "14px Arial";
             var interval = Math.round((bitCoinMaxPrice-bitCoinMinPrice)/3);
             ctx.fillText(numberWithCommas(bitCoinMaxPrice),750,15);
@@ -149,6 +149,7 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
             ctx.moveTo(0, 150);ctx.lineTo(745, 150);ctx.stroke();
             ctx.moveTo(0, 220);ctx.lineTo(745, 220);ctx.stroke();
             ctx.moveTo(0, 290);ctx.lineTo(745, 290);ctx.stroke();
+            ctx.stroke();
 
             if($scope.checkboxModel.value1){
                 ctx.beginPath();
@@ -181,10 +182,11 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
         var USDILS;
+
         $http.get("http://www.apilayer.net/api/live?access_key=36ad517fb030c9d1f97e72e5ee96d717")
             .then(function(response) {
                 USDILS=response.data.quotes.USDILS;
-            })
+            });
     });
 
 
