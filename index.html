@@ -104,7 +104,13 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
             else if(!isNaN(coinDeskPrice))$rootScope.averageOfAll=coinDeskPrice;
             else{$rootScope.averageOfAll=(bitCoinMinPrice+bitCoinMaxPrice)/2 }
             ethereumAverage = Math.round((bitEthFinexPrice+bitEthSteampPrice)/2)
-            $scope.UsdIlsToBitCoin=numberWithCommas(Math.round(USDILS*bitCoinAverage));
+            if(isNaN(USDILS))
+            {
+                $scope.UsdIlsToBitCoin=numberWithCommas(Math.round(3.55*bitCoinAverage));    
+            }
+            else{
+                $scope.UsdIlsToBitCoin=numberWithCommas(Math.round(USDILS*bitCoinAverage));
+            }                
             addToMinMax(bitCoinAverage,ethereumAverage)
         }
         fn60sec();
