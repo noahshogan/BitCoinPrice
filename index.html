@@ -120,10 +120,10 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
         function addToMinMax(bitCoinAverageRef,ethereumAverageRef){
             bitCoinQueue.push(bitCoinAverageRef);
             ethereumQueue.push(ethereumAverageRef);
-            if(bitCoinQueue.length>360){
-                bitCoinQueue.shift();
-                ethereumQueue.shift();
-            }
+            //if(bitCoinQueue.length>360){
+            //    bitCoinQueue.shift();
+            //    ethereumQueue.shift();
+            //}
             bitCoinMinPrice=999999;
             bitCoinMaxPrice=0;
             ethereumMinPrice=999999;
@@ -156,7 +156,7 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
             ctx.moveTo(0, 220);ctx.lineTo(745, 220);ctx.stroke();
             ctx.moveTo(0, 290);ctx.lineTo(745, 290);ctx.stroke();
             ctx.stroke();
-
+            var slopSize =760/bitCoinQueue.length; 
             if($scope.checkboxModel.value1){
                 ctx.beginPath();
                 ctx.strokeStyle="green";
@@ -165,7 +165,7 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
                 if(bitCoinQueue.length>1){
                     for(var i = 1 ; i < bitCoinQueue.length ; i++){
                         var bitHight = (270/(bitCoinMaxPrice-bitCoinMinPrice))*(bitCoinQueue[i]-bitCoinMinPrice);
-                        ctx.lineTo(2.1*(i), 300-bitHight);
+                        ctx.lineTo(slopSize*(i), 300-bitHight);
                     }
                 }
                 ctx.stroke();
