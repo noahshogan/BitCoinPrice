@@ -139,9 +139,9 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
             ctx.font = "14px Arial";
             var interval = Math.round((bitCoinMaxPrice-bitCoinMinPrice)/4);
             ctx.fillText(numberWithCommas(bitCoinMaxPrice),750,15);
-            ctx.fillText(numberWithCommas(bitCoinMaxPrice+interval*3),750,85);
-            ctx.fillText(numberWithCommas(bitCoinMaxPrice+interval*2),750,155);
-            ctx.fillText(numberWithCommas(bitCoinMaxPrice+interval),750,225);
+            ctx.fillText(numberWithCommas(bitCoinMinPrice+interval*3),750,85);
+            ctx.fillText(numberWithCommas(bitCoinMinPrice+interval*2),750,155);
+            ctx.fillText(numberWithCommas(bitCoinMinPrice+interval),750,225);
             ctx.fillText(numberWithCommas(bitCoinMinPrice),750,295);
             ctx.strokeStyle = "#f2f2f2";
             ctx.moveTo(0, 10);ctx.lineTo(745, 10);ctx.stroke();
