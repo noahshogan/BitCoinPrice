@@ -18,7 +18,7 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
     <label>
         Show Ethereum Price Plot:<input type="checkbox" ng-change="change()" ng-model="checkboxModel.value2">
     </label>
-    <button onclick="resetGraph()" >Reset Graph</button>
+    <button ng-click="resetGraph()" >Reset Graph</button>
     <br/>
 </form>
 <canvas id="myCanvas" width="800" height="300" ></canvas>
@@ -47,6 +47,7 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
     var ethereumMaxPrice=0;
     var ethereumMinPrice=0;
     var ethereumQueue = [];
+
     app.controller('myCtrl', function($scope, $http,$rootScope) {
         $scope.change = function() {
             draw();
@@ -55,7 +56,7 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
             value1 : true,
             value2 : false
         };
-        function resetGraph() {
+        $scope.resetGraph= function() {
             bitCoinMaxPrice=bitCoinAverage;
             bitCoinMinPrice=bitCoinAverage;
             ethereumMaxPrice=ethereumAverage;
