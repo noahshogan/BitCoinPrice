@@ -18,6 +18,7 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
     <label>
         Show Ethereum Price Plot:<input type="checkbox" ng-change="change()" ng-model="checkboxModel.value2">
     </label>
+    <button onclick="resetGraph()" value="Reset Graph"></button>
     <br/>
 </form>
 <canvas id="myCanvas" width="800" height="300" ></canvas>
@@ -54,7 +55,16 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
             value1 : true,
             value2 : false
         };
-        function fn60sec() {
+        function resetGraph() {
+            bitCoinMaxPrice=bitCoinAverage;
+            bitCoinMinPrice=bitCoinAverage;
+            ethereumMaxPrice=ethereumAverage;
+            ethereumMinPrice=ethereumAverage;
+            bitCoinQueue = [];
+            ethereumQueue = [];
+            draw();
+        }
+        function loopFunction() {
             $http.get("https://www.bitstamp.net/api/v2/transactions/btcusd/")
                 .then(function(response) {
                     var total=response.data.reduce(function (acc, obj){ return acc + parseInt(obj.price);}, 0);
@@ -110,8 +120,8 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
             }                
             addToMinMax(bitCoinAverage,ethereumAverage)
         }
-        fn60sec();
-        setInterval(fn60sec, 10000);
+        loopFunction();
+        setInterval(loopFunction, 10000);
         function addToMinMax(bitCoinAverageRef,ethereumAverageRef){
             bitCoinQueue.push(bitCoinAverageRef);
             ethereumQueue.push(ethereumAverageRef);
