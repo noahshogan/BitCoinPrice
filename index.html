@@ -40,6 +40,7 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
     var coinDeskPrice;
     var bitEthFinexPrice;
     var bitEthSteampPrice;
+    var bitBitrexPrice;
     var bitCoinMaxPrice=0;
     var bitCoinMinPrice=0;
     var bitCoinQueue = [];
@@ -85,6 +86,14 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
                     .then(function(response) {
                         var total=response.data.reduce(function (acc, obj){ return acc + parseInt(obj[3]);}, 0);
                         bitFinexPrice=Math.round(total/response.data.length);
+                        $scope.bitFinexPrice=numberWithCommas(bitFinexPrice);
+                        return Promise.resolve();
+                    })
+            ).then(
+                $http.get("https://bittrex.com/api/v1.1/public/getmarketsummaries")
+                    .then(function(response) {
+                        var total=response.data;////
+                        bitBitrexPrice=Math.round(total/response.data.length);
                         $scope.bitFinexPrice=numberWithCommas(bitFinexPrice);
                         return Promise.resolve();
                     })
