@@ -5,31 +5,244 @@
     <title>{{averageOfAll}}$</title>
 </head>
 <body>
-    <h1>bitStamp Price: {{bitSteampPrice}}$</h1>
-    <h1>bitFinex &nbsp Price: {{bitFinexPrice}}$</h1>
+<h1>BitCoin</h1>
+<h1>BitStamp: {{bitSteampPrice}}$ &nbsp&nbsp&nbsp&nbsp BitFinex: {{bitFinexPrice}}$ &nbsp&nbsp&nbsp&nbsp CoinDesk: {{coinDeskPrice}}$</h1>
+<h1>Average Price: {{averageOfAll}}$  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp NIS: {{UsdIlsToBitCoin}} </h1>
+minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
+
+<br>
+<form name="myForm" >
+    <label>
+        Show BitCoin Price Plot:<input type="checkbox" ng-change="change()" ng-model="checkboxModel.value1">
+    </label>
+    <label>
+        Show Ethereum Price Plot:<input type="checkbox" ng-change="change()" ng-model="checkboxModel.value2">
+    </label>
+    <select ng-model="timePiriot" ng-change="change()">
+        <option ng-repeat="x in timePiriodOptions" value="{{x}}">{{x}}</option>
+    </select>
+    <button ng-click="resetGraph()" >Reset Graph</button>
+    <br/>
+</form>
+<canvas id="myCanvas" width="800" height="300" ></canvas>
+
+<br>
+<br>
+<h1>Ethereum</h1>
+<h1>BitStamp Price: {{bitEthSteampPrice}}$</h1>
+<h1>BitFinex &nbsp Price: {{bitEthFinexPrice}}$</h1>
+
 <script>
+
+
     var app = angular.module('myApp', []);
     var bitSteampPrice;
-    var bitFinexPrice;app.controller('myCtrl', function($scope, $http,$rootScope) {
-        function fn60sec() {
-        $http.get("https://www.bitstamp.net/api/v2/transactions/btcusd/")
+    var bitFinexPrice;
+    var c = document.getElementById("myCanvas");
+    c.style.border = "none";
+    var ctx = c.getContext("2d");
+    var bitCoinAverage;
+    var coinDeskPrice;
+    var bitEthFinexPrice;
+    var bitEthSteampPrice;
+    var bitBitrexPrice;
+    var bitCoinMaxPrice=0;
+    var bitCoinMinPrice=0;
+    var bitCoinQueue = [];
+    var ethereumAverage;
+    var ethereumMaxPrice=0;
+    var ethereumMinPrice=0;
+    var ethereumQueue = [];
+
+
+    app.controller('myCtrl', function($scope, $http,$rootScope) {
+
+        for(var i = 0 ; i < 2 ; i++){
+            //bitCoinQueue.push(Math.floor(Math.random()*11280));
+        }
+
+        $scope.timePiriodOptions = [1,2,3,4,5];
+        $scope.timePiriot=1;
+        $scope.change = function() {
+            draw();
+        };
+        $scope.checkboxModel = {
+            value1 : true,
+            value2 : false
+        };
+        $scope.resetGraph= function() {
+            bitCoinMaxPrice=bitCoinAverage;
+            bitCoinMinPrice=bitCoinAverage;
+            ethereumMaxPrice=ethereumAverage;
+            ethereumMinPrice=ethereumAverage;
+            bitCoinQueue = [];
+            ethereumQueue = [];
+            draw();
+        }
+        function loopFunction() {
+            $http.get("https://www.bitstamp.net/api/v2/transactions/btcusd/")
+                .then(function(response) {
+                    var total=response.data.reduce(function (acc, obj){ return acc + parseInt(obj.price);}, 0);
+                    bitSteampPrice=Math.round(total/response.data.length);
+                    $scope.bitSteampPrice=numberWithCommas(bitSteampPrice);
+                    return Promise.resolve();
+                }).then(
+                $http.get("https://www.bitstamp.net/api/v2/transactions/ethusd/")
+                    .then(function(response) {
+                        var total=response.data.reduce(function (acc, obj){ return acc + parseInt(obj.price);}, 0);
+                        bitEthSteampPrice=Math.round(total/response.data.length);
+                        $scope.bitEthSteampPrice=numberWithCommas(bitEthSteampPrice);
+                        return Promise.resolve();
+                    })
+            ).then(
+                $http.get("https://api.bitfinex.com/v2/trades/tBTCUSD/hist")
+                    .then(function(response) {
+                        var total=response.data.reduce(function (acc, obj){ return acc + parseInt(obj[3]);}, 0);
+                        bitFinexPrice=Math.round(total/response.data.length);
+                        $scope.bitFinexPrice=numberWithCommas(bitFinexPrice);
+                        return Promise.resolve();
+                    })
+            ).then(
+                $http.get("https://bittrex.com/api/v1.1/public/getmarketsummaries")
+                    .then(function(response) {
+                        var total=response.data;////
+                        bitBitrexPrice=Math.round(total/response.data.length);
+                        $scope.bitFinexPrice=numberWithCommas(bitFinexPrice);
+                        return Promise.resolve();
+                    })
+            ).then(
+                $http.get("https://api.bitfinex.com/v2/trades/tETHUSD/hist")
+                    .then(function(response) {
+                        var total=response.data.reduce(function (acc, obj){ return acc + parseInt(obj[3]);}, 0);
+                        bitEthFinexPrice=Math.round(total/response.data.length);
+                        $scope.bitEthFinexPrice=numberWithCommas(bitEthFinexPrice);
+                        return Promise.resolve();
+                    })
+            ).then(
+                $http.get("https://api.coindesk.com/v1/bpi/currentprice.json")
+                    .then(function(response) {
+                        coinDeskPrice=Math.round(response.data.bpi.USD.rate_float);
+                        $scope.coinDeskPrice=numberWithCommas(coinDeskPrice);
+                        return Promise.resolve();
+                    })
+            ).then(
+                bitCoinAverage = Math.round((bitFinexPrice+bitSteampPrice+coinDeskPrice)/3)
+            )
+            if(!isNaN(bitCoinAverage))$rootScope.averageOfAll=numberWithCommas(bitCoinAverage);
+            else if(!isNaN(bitFinexPrice))$rootScope.averageOfAll=bitFinexPrice;
+            else if(!isNaN(bitSteampPrice))$rootScope.averageOfAll=bitSteampPrice;
+            else if(!isNaN(coinDeskPrice))$rootScope.averageOfAll=coinDeskPrice;
+            else{$rootScope.averageOfAll=(bitCoinMinPrice+bitCoinMaxPrice)/2 }
+            ethereumAverage = Math.round((bitEthFinexPrice+bitEthSteampPrice)/2)
+            if(isNaN(USDILS))
+            {
+                $scope.UsdIlsToBitCoin=numberWithCommas(Math.round(3.55*bitCoinAverage));
+            }
+            else{
+                $scope.UsdIlsToBitCoin=numberWithCommas(Math.round(USDILS*bitCoinAverage));
+            }
+            addToMinMax(bitCoinAverage,ethereumAverage)
+        }
+        loopFunction();
+        setInterval(loopFunction, 10000);
+        function addToMinMax(bitCoinAverageRef,ethereumAverageRef){
+            bitCoinQueue.push(bitCoinAverageRef);
+            ethereumQueue.push(ethereumAverageRef);
+            //if(bitCoinQueue.length>360){
+            //    bitCoinQueue.shift();
+            //    ethereumQueue.shift();
+            //}
+            bitCoinMinPrice=999999;
+            bitCoinMaxPrice=0;
+            ethereumMinPrice=999999;
+            ethereumMaxPrice=0;
+
+            draw();
+        }
+        function draw(){
+
+            var tmpQ = [];
+            var i=0;
+            var tmpCount=0;
+            if(isNaN(bitCoinQueue[0])){
+                bitCoinQueue.shift();
+            }
+            while(i<bitCoinQueue.length){
+                var average=0;
+                var k=0;
+                if(bitCoinQueue.length>0){
+                    for(var j = 0 ; j < $scope.timePiriot&&i<bitCoinQueue.length ; j++){
+                        if(!isNaN(bitCoinQueue[i].toString())){
+                            average+=bitCoinQueue[i++];
+                            k++;
+                        }
+                    }
+                }
+                else{i++}
+                tmpQ[tmpCount++]=(average/k);
+            }
+            if(tmpQ.length>=360){
+                tmpQ=tmpQ.slice(tmpQ.length-360,tmpQ.length);
+            }
+            for(var i = 0 ; i < tmpQ.length ; i++){
+                if(tmpQ[i]<bitCoinMinPrice) bitCoinMinPrice=tmpQ[i];
+                if(tmpQ[i]>bitCoinMaxPrice) bitCoinMaxPrice=tmpQ[i];
+                if(ethereumQueue[i]<ethereumMinPrice) ethereumMinPrice=ethereumQueue[i];
+                if(ethereumQueue[i]>ethereumMaxPrice) ethereumMaxPrice=ethereumQueue[i];
+            }
+            $scope.bitCoinMinPrice=bitCoinMinPrice;
+            $scope.bitCoinMaxPrice=bitCoinMaxPrice;
+            ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+            ctx.beginPath();
+            ctx.font = "14px Arial";
+            var interval = Math.round((bitCoinMaxPrice-bitCoinMinPrice)/4);
+            ctx.fillText(numberWithCommas(bitCoinMaxPrice),750,15);
+            ctx.fillText(numberWithCommas(bitCoinMinPrice+interval*3),750,85);
+            ctx.fillText(numberWithCommas(bitCoinMinPrice+interval*2),750,155);
+            ctx.fillText(numberWithCommas(bitCoinMinPrice+interval),750,225);
+            ctx.fillText(numberWithCommas(bitCoinMinPrice),750,295);
+            ctx.strokeStyle = "#f2f2f2";
+            ctx.moveTo(0, 10);ctx.lineTo(745, 10);ctx.stroke();
+            ctx.moveTo(0, 80);ctx.lineTo(745, 80);ctx.stroke();
+            ctx.moveTo(0, 150);ctx.lineTo(745, 150);ctx.stroke();
+            ctx.moveTo(0, 220);ctx.lineTo(745, 220);ctx.stroke();
+            ctx.moveTo(0, 290);ctx.lineTo(745, 290);ctx.stroke();
+            ctx.stroke();
+            if($scope.checkboxModel.value1){
+                ctx.beginPath();
+                ctx.strokeStyle="green";
+                var firstBitHight = (270/(bitCoinMaxPrice-bitCoinMinPrice))*(tmpQ[0]-bitCoinMinPrice);
+                ctx.moveTo(0, 300-firstBitHight);
+                if(tmpQ.length>1){
+                    for(var i = 1 ; i < tmpQ.length ; i++){
+                        var bitHight = (270/(bitCoinMaxPrice-bitCoinMinPrice))*(tmpQ[i]-bitCoinMinPrice);
+                        ctx.lineTo(2.1*(i), 300-bitHight);
+                    }
+                }
+                ctx.stroke();
+            }
+            if($scope.checkboxModel.value2) {
+                ctx.beginPath();
+                ctx.strokeStyle = "blue";
+                var firstEthHight = (270 / (ethereumMaxPrice - ethereumMinPrice)) * (ethereumQueue[0] - ethereumMinPrice);
+                ctx.moveTo(0, 300 - firstEthHight);
+                if (ethereumQueue.length > 1) {
+                    for (var j = 1; j < ethereumQueue.length; j++) {
+                        var ethHight = (270 / (ethereumMaxPrice - ethereumMinPrice)) * (ethereumQueue[j] - ethereumMinPrice);
+                        ctx.lineTo(2.1 * (j), 300 - ethHight);
+                    }
+                }
+                ctx.stroke();
+            }
+        }
+        function numberWithCommas(x){
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        var USDILS;
+        $http.get("http://www.apilayer.net/api/live?access_key=36ad517fb030c9d1f97e72e5ee96d717")
             .then(function(response) {
-                var total=response.data.reduce(function (acc, obj){ return acc + parseInt(obj.price);}, 0);
-                bitSteampPrice=Math.round(total/response.data.length);
-                $scope.bitSteampPrice=bitSteampPrice;
-            }).then(
-        $http.get("https://api.bitfinex.com/v2/trades/tBTCUSD/hist")
-            .then(function(response) {
-                var total=response.data.reduce(function (acc, obj){ return acc + parseInt(obj[3]);}, 0);
-                bitFinexPrice=Math.round(total/response.data.length);
-                $scope.bitFinexPrice=bitFinexPrice;
-             })
-        ).then(
-            $rootScope.averageOfAll=(bitFinexPrice+bitSteampPrice)/2
-        )
-    }
-        fn60sec();
-        setInterval(fn60sec, 10000);
+                USDILS=response.data.quotes.USDILS;
+            });
     });
 </script>
 </body>
