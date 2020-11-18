@@ -6,7 +6,7 @@
 </head>
 <body>
 <h1>BitCoin</h1>
-<h1>BitStamp: {{bitSteampPrice}}$ &nbsp&nbsp&nbsp&nbsp BitFinex: {{bitFinexPrice}}$ &nbsp&nbsp&nbsp&nbsp CoinDesk: {{coinDeskPrice}}$</h1>
+<h1>BitStamp: {{bitSteampPrice}}$ &nbsp&nbsp&nbsp&nbsp CoinDesk: {{coinDeskPrice}}$</h1>
 <h1>Average Price: {{averageOfAll}}$  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp NIS: {{UsdIlsToBitCoin}} </h1>
 minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
 
@@ -30,20 +30,17 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
 <br>
 <h1>Ethereum</h1>
 <h1>BitStamp Price: {{bitEthSteampPrice}}$</h1>
-<h1>BitFinex &nbsp Price: {{bitEthFinexPrice}}$</h1>
 
 <script>
 
 
     var app = angular.module('myApp', []);
     var bitSteampPrice;
-    var bitFinexPrice;
     var c = document.getElementById("myCanvas");
     c.style.border = "none";
     var ctx = c.getContext("2d");
     var bitCoinAverage;
     var coinDeskPrice;
-    var bitEthFinexPrice;
     var bitEthSteampPrice;
     var bitBitrexPrice;
     var bitCoinMaxPrice=0;
@@ -95,30 +92,6 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
                         return Promise.resolve();
                     })
             ).then(
-                $http.get("https://api.bitfinex.com/v2/trades/tBTCUSD/hist")
-                    .then(function(response) {
-                        var total=response.data.reduce(function (acc, obj){ return acc + parseInt(obj[3]);}, 0);
-                        bitFinexPrice=Math.round(total/response.data.length);
-                        $scope.bitFinexPrice=numberWithCommas(bitFinexPrice);
-                        return Promise.resolve();
-                    })
-            ).then(
-                $http.get("https://bittrex.com/api/v1.1/public/getmarketsummaries")
-                    .then(function(response) {
-                        var total=response.data;////
-                        bitBitrexPrice=Math.round(total/response.data.length);
-                        $scope.bitFinexPrice=numberWithCommas(bitFinexPrice);
-                        return Promise.resolve();
-                    })
-            ).then(
-                $http.get("https://api.bitfinex.com/v2/trades/tETHUSD/hist")
-                    .then(function(response) {
-                        var total=response.data.reduce(function (acc, obj){ return acc + parseInt(obj[3]);}, 0);
-                        bitEthFinexPrice=Math.round(total/response.data.length);
-                        $scope.bitEthFinexPrice=numberWithCommas(bitEthFinexPrice);
-                        return Promise.resolve();
-                    })
-            ).then(
                 $http.get("https://api.coindesk.com/v1/bpi/currentprice.json")
                     .then(function(response) {
                         coinDeskPrice=Math.round(response.data.bpi.USD.rate_float);
@@ -126,14 +99,13 @@ minPrice : {{bitCoinMinPrice}}$ &nbsp&nbsp&nbsp  maxPrice : {{bitCoinMaxPrice}}$
                         return Promise.resolve();
                     })
             ).then(
-                bitCoinAverage = Math.round((bitFinexPrice+bitSteampPrice+coinDeskPrice)/3)
+                bitCoinAverage = Math.round((bitSteampPrice+coinDeskPrice)/2)
             )
             if(!isNaN(bitCoinAverage))$rootScope.averageOfAll=numberWithCommas(bitCoinAverage);
-            else if(!isNaN(bitFinexPrice))$rootScope.averageOfAll=bitFinexPrice;
             else if(!isNaN(bitSteampPrice))$rootScope.averageOfAll=bitSteampPrice;
             else if(!isNaN(coinDeskPrice))$rootScope.averageOfAll=coinDeskPrice;
             else{$rootScope.averageOfAll=(bitCoinMinPrice+bitCoinMaxPrice)/2 }
-            ethereumAverage = Math.round((bitEthFinexPrice+bitEthSteampPrice)/2)
+            ethereumAverage = Math.round((bitEthSteampPrice)/1)
             if(isNaN(USDILS))
             {
                 $scope.UsdIlsToBitCoin=numberWithCommas(Math.round(3.55*bitCoinAverage));
